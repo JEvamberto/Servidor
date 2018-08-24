@@ -48,6 +48,19 @@ public class TrataCliente implements Runnable {
     short station;
     File arquivo;
     short udpPort;
+    EnviarUDP estacao[];
+    
+    public TrataCliente (Socket cliente , EnviarUDP[] estacao){
+        
+        this.estacao=estacao;
+        
+        this.cliente = cliente;
+        Thread t = new Thread(this);
+        this.welcome = new Welcome();
+        this.announce = new Announce();
+        this.invalidCommand = new InvalidCommand();
+        t.start();
+    }
 
     public TrataCliente(Socket cliente) {
 
@@ -68,7 +81,7 @@ public class TrataCliente implements Runnable {
             File file = new File("music");
             File[] arquivo = file.listFiles();
 
-            welcome.setNumStations((short) arquivo.length);
+            welcome.setNumStations((short) estacao.length);
 
             DataInputStream receber = new DataInputStream(cliente.getInputStream());
 
@@ -142,15 +155,20 @@ public class TrataCliente implements Runnable {
                     // saida.writeObject(arquivo[station].getName());
 
                     if (sabe) {
+                        
+                        estacao[station].setUdpPort(udpPort);
 
-                        enviar = new EnviarUDP(arquivo, udpPort, station);
+                        //enviar = new EnviarUDP(arquivo, udpPort, station);
                         stationAnterior = station;
                         sabe = false;
                     } else {
-                        if (stationAnterior != station && enviar.getT().isAlive()) {
-                            enviar.getT().interrupt();
-                            enviar = null;
-                            enviar = new EnviarUDP(arquivo, udpPort, station);
+                        if (stationAnterior != station ) {
+                            
+                            estacao[stationAnterior].setUdpPort((short)0);
+                            estacao[stationAnterior].setUdpPort(udpPort);
+                            //enviar.getT().interrupt();
+                            //enviar = null;
+                            //enviar = new EnviarUDP(arquivo, udpPort, station);
                         }
                         stationAnterior = station;
 

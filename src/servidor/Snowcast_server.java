@@ -6,6 +6,7 @@
 package servidor;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -29,7 +30,15 @@ public class Snowcast_server {
 
     public static void servidor() {
         
-        EnviarUDP []estacao= new EnviarUDP[30];
+       File file = new File("music");
+        File[] arquivo = file.listFiles();
+        EnviarUDP estacao[]=new EnviarUDP[arquivo.length];
+        for (int i = 0; i < estacao.length; i++) {
+            
+            estacao[i]=new EnviarUDP(arquivo[i]);
+        }
+        
+        
 
         try {
             serverTCP = new ServerSocket(12333);
@@ -37,7 +46,7 @@ public class Snowcast_server {
             
             Socket cliente = serverTCP.accept();
             
-            new TrataCliente(cliente);
+            new TrataCliente(cliente,estacao);
           
           }
           

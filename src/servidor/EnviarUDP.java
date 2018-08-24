@@ -26,9 +26,14 @@ public class EnviarUDP implements Runnable {
 
     private short station;
     private File[] arquivo;
+    private File ArquivoOficial;
     private short udpPort;
     private Thread t;
     byte audio[];
+    
+    public EnviarUDP (File arquivoOficial){
+        this.ArquivoOficial=arquivoOficial;
+    }
 
     public EnviarUDP(File[] arquivo, short udpPort, short station) {
         this.station = station;
@@ -60,7 +65,7 @@ public class EnviarUDP implements Runnable {
             //   double numberPkg = Math.ceil((int) arquivo[station].length() / pacote);
             //Enviar tamanho do arquivo
             //Fim do tamanho do arquivo
-            File file = arquivo[station];
+            File file = this.ArquivoOficial;
             this.audio = EnviarUDP.getBytes(file);
 
             DatagramPacket pkg;
@@ -111,6 +116,13 @@ public class EnviarUDP implements Runnable {
         System.out.println("Mensagem enviada");
 
     }
+    
+    public void setUdpPort(short udpPort){
+        if (udpPort!=0) {
+            this.udpPort=udpPort;
+        }
+    }
+        
 
     public static byte[] getBytes(File file) {
         int len = (int) file.length();
