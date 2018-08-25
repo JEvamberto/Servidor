@@ -30,9 +30,11 @@ public class Snowcast_server {
 
     public static void servidor() {
         
-       File file = new File("music");
+        File file = new File("music");
         File[] arquivo = file.listFiles();
+        
         EnviarUDP estacao[]=new EnviarUDP[arquivo.length];
+        
         for (int i = 0; i < estacao.length; i++) {
             
             estacao[i]=new EnviarUDP(arquivo[i]);

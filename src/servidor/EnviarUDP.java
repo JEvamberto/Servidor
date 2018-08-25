@@ -27,12 +27,18 @@ public class EnviarUDP implements Runnable {
     private short station;
     private File[] arquivo;
     private File ArquivoOficial;
-    private short udpPort;
+    private short udpPort=12335;
     private Thread t;
     byte audio[];
     
     public EnviarUDP (File arquivoOficial){
         this.ArquivoOficial=arquivoOficial;
+        this.station = station;
+        this.arquivo = arquivo;
+        this.udpPort = udpPort;
+        this.t = new Thread(this);
+        t.start();
+        System.out.println("Eu foi criado" + station + " " + udpPort);
     }
 
     public EnviarUDP(File[] arquivo, short udpPort, short station) {

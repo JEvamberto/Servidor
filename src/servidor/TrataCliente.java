@@ -117,6 +117,7 @@ public class TrataCliente implements Runnable {
             System.out.println("Porta UDP=" + udpPort);
             boolean sabe = true;
             EnviarUDP enviar = null;
+            DataOutputStream saida;
             while (true) {
                 //recebendoSetStation
 
@@ -141,7 +142,7 @@ public class TrataCliente implements Runnable {
                     static char songName[] = new char[songNameSize];
                      */
                     System.out.println("ENVIANDO ANNOUNCE");
-                    DataOutputStream saida = new DataOutputStream(cliente.getOutputStream());
+                   saida = new DataOutputStream(cliente.getOutputStream());
 
                     announce.setSongName(arquivo[station].getName().toCharArray());
                     
@@ -164,8 +165,10 @@ public class TrataCliente implements Runnable {
                     } else {
                         if (stationAnterior != station ) {
                             
-                            estacao[stationAnterior].setUdpPort((short)0);
-                            estacao[stationAnterior].setUdpPort(udpPort);
+                            estacao[stationAnterior].setUdpPort((short)11111);
+                            estacao[station].setUdpPort(udpPort);
+                            
+                            
                             //enviar.getT().interrupt();
                             //enviar = null;
                             //enviar = new EnviarUDP(arquivo, udpPort, station);
@@ -175,6 +178,8 @@ public class TrataCliente implements Runnable {
                     }
 
                 }
+                
+                saida=null;
 
             }
 
