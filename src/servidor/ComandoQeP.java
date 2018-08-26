@@ -18,59 +18,68 @@ import java.util.logging.Logger;
  */
 public class ComandoQeP implements Runnable {
 
-    
     private EnviarUDP[] estacao;
     private Thread thread;
     private ArrayList<Socket> clientes;
-    
-    public ComandoQeP (EnviarUDP[] estacao, ArrayList <Socket> cliente ){
-        this.estacao=estacao;
-        this.clientes=cliente;
-    
+
+    public ComandoQeP(EnviarUDP[] estacao, ArrayList<Socket> cliente) {
+        this.estacao = estacao;
+        this.clientes = cliente;
+        this.thread = new Thread(this);
+        this.thread.start();
+
     }
-    
+
     @Override
     public void run() {
-        
-       Scanner teclado;
-       char comando;
-        while (true){
-            teclado= new Scanner (System.in);
+        System.out.println("Eu COMANDOQeP foi criado");
+        Scanner teclado;
+        char comando;
+        while (true) {
+            teclado = new Scanner(System.in);
             System.out.println("Comando P ou Q:");
-            comando=teclado.nextLine().charAt(0);
-            
-            if (comando=='P' || comando== 'p') {
+            comando = teclado.nextLine().charAt(0);
+
+            if (comando == 'P' || comando == 'p') {
                 this.listarClientes();
-            }else if(comando == 'Q' || comando == 'q'){
+            } else if (comando == 'Q' || comando == 'q') {
                 this.fecharConexao();
             }
-            teclado=null;
-            
-            
-        
+            teclado = null;
+
         }
-        
+
     }
-    
-    public void listarClientes(){
-        System.out.println("Cliente no servidor"+clientes.size());
-        
+
+    public void listarClientes() {
+        System.out.println("Cliente no servidor: " + clientes.size());
+
         for (int i = 0; i < this.estacao.length; i++) {
-            
-            System.out.println("Estação: "+i+" Clientes: "+estacao[i].getQuantidadeDeOuvintes() );
+
+            System.out.println("Estação: " + i + " Clientes: " + estacao[i].getQuantidadeDeOuvintes());
         }
     }
-    
-    public void fecharConexao(){
-        
-        for (Socket cliente : clientes) {
+
+    public void fecharConexao() {
+
+   
             
             try {
-                cliente.close();
+
+                
+                for (int i = 0; i < clientes.size(); i++) {
+                    if (clientes.get(i)!=null) {
+                        clientes.get(i).close();
+                        clientes.remove(clientes.get(i));
+                       
+                    }
+                }
+                 System.exit(0);
+                
             } catch (IOException ex) {
                 Logger.getLogger(ComandoQeP.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        
     }
-    
+
 }

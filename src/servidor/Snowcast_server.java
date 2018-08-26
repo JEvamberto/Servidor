@@ -49,11 +49,13 @@ public class Snowcast_server {
 
         try {
             serverTCP = new ServerSocket(12333);
+            ComandoQeP comando = new ComandoQeP(estacao,listaCliente);
           while(true){     
             
             Socket cliente = serverTCP.accept();
             
             listaCliente.add(cliente);
+            
             new TrataCliente(cliente,estacao);
           
           }

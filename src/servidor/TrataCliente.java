@@ -120,7 +120,9 @@ public class TrataCliente implements Runnable {
             DataOutputStream saida;
             while (true) {
                 //recebendoSetStation
-
+                if (!cliente.isClosed()) {
+                    
+                
                 DataInputStream recebeSetStation = new DataInputStream(cliente.getInputStream());
 
                 //SetStation setStation = (SetStation) recebeSetStation.readObject();
@@ -158,6 +160,7 @@ public class TrataCliente implements Runnable {
                     if (sabe) {
                         
                         estacao[station].setUdpPort(udpPort);
+                        estacao[station].connect();
 
                         //enviar = new EnviarUDP(arquivo, udpPort, station);
                         stationAnterior = station;
@@ -167,6 +170,8 @@ public class TrataCliente implements Runnable {
                             
                             estacao[stationAnterior].setUdpPort((short)11111);
                             estacao[station].setUdpPort(udpPort);
+                            estacao[stationAnterior].desconnect();
+                            estacao[station].connect();
                             
                             
                             //enviar.getT().interrupt();
@@ -181,12 +186,14 @@ public class TrataCliente implements Runnable {
                 
                 saida=null;
 
+            
+            }
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
+          //  Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
+           // Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
