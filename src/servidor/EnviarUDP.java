@@ -27,12 +27,13 @@ public class EnviarUDP implements Runnable {
     private short station;
     private File[] arquivo;
     private File ArquivoOficial;
-    private short udpPort=12335;
+    private short udpPort = 12335;
+    private int quantidadeDeOuvintes;
     private Thread t;
     byte audio[];
-    
-    public EnviarUDP (File arquivoOficial){
-        this.ArquivoOficial=arquivoOficial;
+
+    public EnviarUDP(File arquivoOficial) {
+        this.ArquivoOficial = arquivoOficial;
         this.station = station;
         this.arquivo = arquivo;
         this.udpPort = udpPort;
@@ -59,10 +60,22 @@ public class EnviarUDP implements Runnable {
         this.t = t;
     }
 
+    public void connect() {
+        this.quantidadeDeOuvintes++;
+    }
+
+    public void desconnect() {
+        this.quantidadeDeOuvintes--;
+    }
+
+    public int getQuantidadeDeOuvintes() {
+        return this.quantidadeDeOuvintes;
+    }
+
     @Override
     public void run() {
         try {
-            
+
             InetAddress addr = InetAddress.getByName("localhost");
 
             int pacoteTam = 50000;
@@ -76,27 +89,26 @@ public class EnviarUDP implements Runnable {
 
             DatagramPacket pkg;
             DatagramSocket enviar = new DatagramSocket();
-           // enviar.setBroadcast(true);
-            
+            // enviar.setBroadcast(true);
+
             int count = 0;
-            
+
             while (true) {
 
                 for (int i = 0; i < audio.length; i++) {
-                   // System.out.println("SERÁ");
+                    // System.out.println("SERÁ");
                     pacote[count] = audio[i];
                     if (count == pacote.length - 1) {
-                        
-                        pkg= new DatagramPacket(pacote,pacote.length,addr,udpPort);
+
+                        pkg = new DatagramPacket(pacote, pacote.length, addr, udpPort);
                         enviar.send(pkg);
                         count = 0;
                         Thread.sleep(3000);
                     }
                     count++;
-                    
 
                 }
-               // System.out.println("oi");
+                // System.out.println("oi");
             }
 
             /*  for (double i = 0; i < numberPkg + 1; i++) {
@@ -122,13 +134,12 @@ public class EnviarUDP implements Runnable {
         System.out.println("Mensagem enviada");
 
     }
-    
-    public void setUdpPort(short udpPort){
-        if (udpPort!=0) {
-            this.udpPort=udpPort;
+
+    public void setUdpPort(short udpPort) {
+        if (udpPort != 0) {
+            this.udpPort = udpPort;
         }
     }
-        
 
     public static byte[] getBytes(File file) {
         int len = (int) file.length();

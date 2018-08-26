@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,8 +28,12 @@ public class Snowcast_server {
 //server
     static ServerSocket serverTCP;
     static DatagramSocket serverUDP;
+    static ArrayList<Socket> listaCliente;
 
     public static void servidor() {
+        
+        listaCliente= new ArrayList<>();
+        
         
         File file = new File("music");
         File[] arquivo = file.listFiles();
@@ -48,6 +53,7 @@ public class Snowcast_server {
             
             Socket cliente = serverTCP.accept();
             
+            listaCliente.add(cliente);
             new TrataCliente(cliente,estacao);
           
           }
