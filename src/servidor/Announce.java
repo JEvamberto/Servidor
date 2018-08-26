@@ -7,6 +7,7 @@ package servidor;
 
 import java.io.Serializable;
 
+
 /**
  *
  * @author jose
@@ -39,7 +40,6 @@ public class Announce implements Serializable {
     public void setSongName(char[] songName) {
         this.songName = songName;
     }
-    
-    
+   
     
 }
