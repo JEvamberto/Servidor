@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -76,7 +77,7 @@ public class EnviarUDP implements Runnable {
     public void run() {
         try {
 
-            InetAddress addr = InetAddress.getByName("localhost");
+            InetAddress addr = InetAddress.getByName("192.168.0.255");
 
             int pacoteTam = 50000;
             byte pacote[] = new byte[pacoteTam];
@@ -89,8 +90,12 @@ public class EnviarUDP implements Runnable {
 
             DatagramPacket pkg;
             DatagramSocket enviar = new DatagramSocket();
-            // enviar.setBroadcast(true);
-
+            
+            enviar.setReuseAddress(true);
+        
+            
+            
+            
             int count = 0;
 
             while (true) {
