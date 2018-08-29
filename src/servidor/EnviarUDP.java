@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,7 @@ public class EnviarUDP implements Runnable {
     private short udpPort = 12335;
     private int quantidadeDeOuvintes;
     private Thread t;
+    private ArrayList portas= new ArrayList();
     byte audio[];
 
     public EnviarUDP(File arquivoOficial) {
@@ -61,12 +63,14 @@ public class EnviarUDP implements Runnable {
         this.t = t;
     }
 
-    public void connect() {
+    public void connect(short portas) {
         this.quantidadeDeOuvintes++;
+        this.portas.add(portas);
     }
 
-    public void desconnect() {
+    public void desconnect(short portas) {
         this.quantidadeDeOuvintes--;
+        this.portas.remove((Object) portas );
     }
 
     public int getQuantidadeDeOuvintes() {
@@ -90,12 +94,9 @@ public class EnviarUDP implements Runnable {
 
             DatagramPacket pkg;
             DatagramSocket enviar = new DatagramSocket();
-            
+
             enviar.setReuseAddress(true);
-        
-            
-            
-            
+
             int count = 0;
 
             while (true) {
@@ -104,9 +105,11 @@ public class EnviarUDP implements Runnable {
                     // System.out.println("SERÁ");
                     pacote[count] = audio[i];
                     if (count == pacote.length - 1) {
+                        for (int j = 0; j < this.portas.size(); j++) {
+                            pkg = new DatagramPacket(pacote, pacote.length, addr, (short)this.portas.get(j));
+                            enviar.send(pkg);
+                        }
 
-                        pkg = new DatagramPacket(pacote, pacote.length, addr, udpPort);
-                        enviar.send(pkg);
                         count = 0;
                         Thread.sleep(3000);
                     }
