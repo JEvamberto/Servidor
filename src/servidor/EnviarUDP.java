@@ -33,6 +33,7 @@ public class EnviarUDP implements Runnable {
     private int quantidadeDeOuvintes;
     private Thread t;
     private ArrayList portas= new ArrayList();
+    private ArrayList enderecos= new ArrayList();
     byte audio[];
 
     public EnviarUDP(File arquivoOficial) {
@@ -63,14 +64,17 @@ public class EnviarUDP implements Runnable {
         this.t = t;
     }
 
-    public void connect(short portas) {
+    public void connect(short portas, Object endereco) {
         this.quantidadeDeOuvintes++;
+        this.enderecos.add(endereco);
         this.portas.add(portas);
     }
 
-    public void desconnect(short portas) {
+    public void desconnect(short portas, Object endereco) {
         this.quantidadeDeOuvintes--;
+        
         this.portas.remove((Object) portas );
+        this.enderecos.add((Object) endereco);
     }
 
     public int getQuantidadeDeOuvintes() {
@@ -94,8 +98,10 @@ public class EnviarUDP implements Runnable {
 
             DatagramPacket pkg;
             DatagramSocket enviar = new DatagramSocket();
-
+            
             enviar.setReuseAddress(true);
+
+            enviar.setBroadcast(true);
 
             int count = 0;
 
@@ -106,7 +112,7 @@ public class EnviarUDP implements Runnable {
                     pacote[count] = audio[i];
                     if (count == pacote.length - 1) {
                         for (int j = 0; j < this.portas.size(); j++) {
-                            pkg = new DatagramPacket(pacote, pacote.length, addr, (short)this.portas.get(j));
+                            pkg = new DatagramPacket(pacote, pacote.length,(InetAddress)this.enderecos.get(j), (short)this.portas.get(j));
                             enviar.send(pkg);
                         }
 

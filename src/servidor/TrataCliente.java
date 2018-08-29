@@ -160,7 +160,7 @@ public class TrataCliente implements Runnable {
                     if (sabe) {
                         
                        
-                        estacao[station].connect(udpPort);
+                        estacao[station].connect(udpPort,this.cliente.getInetAddress());
 
                         //enviar = new EnviarUDP(arquivo, udpPort, station);
                         stationAnterior = station;
@@ -168,8 +168,8 @@ public class TrataCliente implements Runnable {
                     } else {
                         if (stationAnterior != station ) {
                             
-                            estacao[stationAnterior].desconnect(udpPort);
-                            estacao[station].connect(udpPort);
+                            estacao[stationAnterior].desconnect(udpPort,this.cliente.getInetAddress());
+                            estacao[station].connect(udpPort,this.cliente.getInetAddress());
                         
                             
                             
