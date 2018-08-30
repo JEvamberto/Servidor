@@ -5,11 +5,13 @@
  */
 package servidor;
 
+import java.io.Serializable;
+
 /**
  *
  * @author jose
  */
-public class InvalidCommand {
+public class InvalidCommand implements Serializable{
     
      byte InvalidreplyType = 2;
      byte InvalidreplyStringSize;

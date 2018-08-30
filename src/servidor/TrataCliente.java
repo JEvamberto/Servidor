@@ -108,8 +108,20 @@ public class TrataCliente implements Runnable {
                 enviarCliente.write(dadosWelcome);
 
             } else {
-
+                InvalidCommand comandoInvalido= new InvalidCommand();
+                
+                comandoInvalido.setInvalidreplyString(("Falha:  CommandType de HELLO diferente 0 ").toCharArray());
+                comandoInvalido.setInvalidreplyType((byte)2);
+                
+                DataOutputStream enviarInvalid = new DataOutputStream(this.cliente.getOutputStream());
+                
+                byte dadosInvalido[] = tr.serialize(comandoInvalido);
+                
+                enviarInvalid.writeInt(dadosInvalido.length);
+                enviarInvalid.write(dadosInvalido);
+                
                 System.out.println("Falha:  CommandType de HELLO diferente 0 ");
+                
 
             }
 
