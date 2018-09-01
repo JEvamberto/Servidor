@@ -151,22 +151,9 @@ public class TrataCliente implements Runnable {
                     static byte songNameSize;
                     static char songName[] = new char[songNameSize];
                          */
-                        System.out.println("EStação:"+station);
-                        if (station < 0 && station >= estacao.length) {
-                            saida = new DataOutputStream(cliente.getOutputStream());
-                            InvalidCommand comandoInvalidd = new InvalidCommand();
-                            String erro = "Erro: A estação " + station + " Não existe";
-                            comandoInvalidd.setInvalidreplyString(erro.toCharArray());
-                            byte[] dadosInvalidd = tr.serialize(comandoInvalidd);
+                        station = (short) setStation.getStationNumber();
+                        if (station >= 0 && station < estacao.length) {
 
-                            saida.writeInt(dadosInvalidd.length);
-                            saida.write(dadosInvalidd);
-                            saida.flush();
-
-                            saida = null;
-
-                        } else {
-                            station = (short) setStation.getStationNumber();
                             System.out.println("Estação escolhida: " + station);
                             System.out.println("ENVIANDO ANNOUNCE");
                             saida = new DataOutputStream(cliente.getOutputStream());
@@ -178,21 +165,43 @@ public class TrataCliente implements Runnable {
                             saida.writeInt(dadosAnnounce.length);
                             saida.write(dadosAnnounce);
                             saida.flush();
+
+                        } else {
+                            
+                            saida = new DataOutputStream(cliente.getOutputStream());
+                            InvalidCommand comandoInvalidd = new InvalidCommand();
+                            String erro = "Erro: A estação " + station + " não existe";
+                            comandoInvalidd.setInvalidreplyString(erro.toCharArray());
+                            byte[] dadosInvalidd = tr.serialize(comandoInvalidd);
+
+                            saida.writeInt(dadosInvalidd.length);
+                            saida.write(dadosInvalidd);
+                            saida.flush();
+
+                            saida = null;
+
                         }
 
                         // saida.writeObject(arquivo[station].getName());
                         if (sabe) {
-
+                            
+                            if (station>=0 && station<estacao.length) {
+                                
                             estacao[station].connect(udpPort, this.cliente.getInetAddress());
 
                             //enviar = new EnviarUDP(arquivo, udpPort, station);
                             stationAnterior = station;
                             sabe = false;
+                                
+                            }
+
                         } else {
                             if (stationAnterior != station) {
-
-                                estacao[stationAnterior].desconnect(udpPort, this.cliente.getInetAddress());
-                                estacao[station].connect(udpPort, this.cliente.getInetAddress());
+                                if (station >= 0 && station < estacao.length) {
+                                    
+                                    estacao[stationAnterior].desconnect(udpPort, this.cliente.getInetAddress());
+                                    estacao[station].connect(udpPort, this.cliente.getInetAddress());
+                                }
 
                                 //enviar.getT().interrupt();
                                 //enviar = null;
