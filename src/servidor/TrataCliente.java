@@ -49,11 +49,11 @@ public class TrataCliente implements Runnable {
     File arquivo;
     short udpPort;
     EnviarUDP estacao[];
-    
-    public TrataCliente (Socket cliente , EnviarUDP[] estacao){
-        
-        this.estacao=estacao;
-        
+
+    public TrataCliente(Socket cliente, EnviarUDP[] estacao) {
+
+        this.estacao = estacao;
+
         this.cliente = cliente;
         Thread t = new Thread(this);
         this.welcome = new Welcome();
@@ -108,20 +108,19 @@ public class TrataCliente implements Runnable {
                 enviarCliente.write(dadosWelcome);
 
             } else {
-                InvalidCommand comandoInvalido= new InvalidCommand();
-                
+                InvalidCommand comandoInvalido = new InvalidCommand();
+
                 comandoInvalido.setInvalidreplyString(("Falha:  CommandType de HELLO diferente 0 ").toCharArray());
-                comandoInvalido.setInvalidreplyType((byte)2);
-                
+                comandoInvalido.setInvalidreplyType((byte) 2);
+
                 DataOutputStream enviarInvalid = new DataOutputStream(this.cliente.getOutputStream());
-                
+
                 byte dadosInvalido[] = tr.serialize(comandoInvalido);
-                
+
                 enviarInvalid.writeInt(dadosInvalido.length);
                 enviarInvalid.write(dadosInvalido);
-                
+
                 System.out.println("Falha:  CommandType de HELLO diferente 0 ");
-                
 
             }
 
@@ -133,78 +132,87 @@ public class TrataCliente implements Runnable {
             while (true) {
                 //recebendoSetStation
                 if (!cliente.isClosed()) {
-                    
-                
-                DataInputStream recebeSetStation = new DataInputStream(cliente.getInputStream());
 
-                //SetStation setStation = (SetStation) recebeSetStation.readObject();
-                int tamanho1 = recebeSetStation.readInt();
-                byte[] dadosSetStation = new byte[tamanho1];
-                
-                recebeSetStation.read(dadosSetStation, 0, tamanho1);
-                
-                SetStation setStation=(SetStation)tr.deserialize(dadosSetStation);
-                
-                if ((byte) setStation.getCommandType1() == 1) {
-                    //Lido com sucesso
-                    station = (short) setStation.getStationNumber();
-                    System.out.println("Estação escolhida: " + station);
+                    DataInputStream recebeSetStation = new DataInputStream(cliente.getInputStream());
 
-                    /*  2.Announce
+                    //SetStation setStation = (SetStation) recebeSetStation.readObject();
+                    int tamanho1 = recebeSetStation.readInt();
+                    byte[] dadosSetStation = new byte[tamanho1];
+
+                    recebeSetStation.read(dadosSetStation, 0, tamanho1);
+
+                    SetStation setStation = (SetStation) tr.deserialize(dadosSetStation);
+
+                    if ((byte) setStation.getCommandType1() == 1) {
+                        //Lido com sucesso
+
+                        /*  2.Announce
                     static byte replayType = 1;
                     static byte songNameSize;
                     static char songName[] = new char[songNameSize];
-                     */
-                    System.out.println("ENVIANDO ANNOUNCE");
-                   saida = new DataOutputStream(cliente.getOutputStream());
+                         */
+                        System.out.println("EStação:"+station);
+                        if (station < 0 && station >= estacao.length) {
+                            saida = new DataOutputStream(cliente.getOutputStream());
+                            InvalidCommand comandoInvalidd = new InvalidCommand();
+                            String erro = "Erro: A estação " + station + " Não existe";
+                            comandoInvalidd.setInvalidreplyString(erro.toCharArray());
+                            byte[] dadosInvalidd = tr.serialize(comandoInvalidd);
 
-                    announce.setSongName(arquivo[station].getName().toCharArray());
-                    
-                    byte [] dadosAnnounce = tr.serialize(announce);
-                    
-                    saida.writeInt(dadosAnnounce.length);
-                    saida.write(dadosAnnounce);
-                    saida.flush();
-                    
-                    
-                    // saida.writeObject(arquivo[station].getName());
+                            saida.writeInt(dadosInvalidd.length);
+                            saida.write(dadosInvalidd);
+                            saida.flush();
 
-                    if (sabe) {
-                        
-                       
-                        estacao[station].connect(udpPort,this.cliente.getInetAddress());
+                            saida = null;
 
-                        //enviar = new EnviarUDP(arquivo, udpPort, station);
-                        stationAnterior = station;
-                        sabe = false;
-                    } else {
-                        if (stationAnterior != station ) {
-                            
-                            estacao[stationAnterior].desconnect(udpPort,this.cliente.getInetAddress());
-                            estacao[station].connect(udpPort,this.cliente.getInetAddress());
-                        
-                            
-                            
-                            //enviar.getT().interrupt();
-                            //enviar = null;
-                            //enviar = new EnviarUDP(arquivo, udpPort, station);
+                        } else {
+                            station = (short) setStation.getStationNumber();
+                            System.out.println("Estação escolhida: " + station);
+                            System.out.println("ENVIANDO ANNOUNCE");
+                            saida = new DataOutputStream(cliente.getOutputStream());
+
+                            announce.setSongName(arquivo[station].getName().toCharArray());
+
+                            byte[] dadosAnnounce = tr.serialize(announce);
+
+                            saida.writeInt(dadosAnnounce.length);
+                            saida.write(dadosAnnounce);
+                            saida.flush();
                         }
-                        stationAnterior = station;
+
+                        // saida.writeObject(arquivo[station].getName());
+                        if (sabe) {
+
+                            estacao[station].connect(udpPort, this.cliente.getInetAddress());
+
+                            //enviar = new EnviarUDP(arquivo, udpPort, station);
+                            stationAnterior = station;
+                            sabe = false;
+                        } else {
+                            if (stationAnterior != station) {
+
+                                estacao[stationAnterior].desconnect(udpPort, this.cliente.getInetAddress());
+                                estacao[station].connect(udpPort, this.cliente.getInetAddress());
+
+                                //enviar.getT().interrupt();
+                                //enviar = null;
+                                //enviar = new EnviarUDP(arquivo, udpPort, station);
+                            }
+                            stationAnterior = station;
+
+                        }
 
                     }
 
-                }
-                
-                saida=null;
+                    saida = null;
 
-            
-            }
+                }
             }
 
         } catch (IOException ex) {
-          //  Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
+            //  Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-           // Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
+            // Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
