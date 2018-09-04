@@ -45,11 +45,13 @@ public class Snowcast_server {
             estacao[i]=new EnviarUDP(arquivo[i]);
         }
         
+       
         
 
         try {
             serverTCP = new ServerSocket(12333);
             ComandoQeP comando = new ComandoQeP(estacao,listaCliente);
+             ClienteDesconecta desconnect= new ClienteDesconecta (listaCliente,estacao);
           while(true){     
             
             Socket cliente = serverTCP.accept();
@@ -61,6 +63,7 @@ public class Snowcast_server {
           }
           
         } catch (IOException ex) {
+            
             Logger.getLogger(Snowcast_server.class.getName()).log(Level.SEVERE, null, ex);
         }
 

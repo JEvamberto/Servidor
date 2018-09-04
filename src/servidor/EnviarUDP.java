@@ -76,6 +76,9 @@ public class EnviarUDP implements Runnable {
         this.portas.remove((Object) portas );
         this.enderecos.add((Object) endereco);
     }
+    public void desconnectCliente(){
+    
+    }
 
     public int getQuantidadeDeOuvintes() {
         return this.quantidadeDeOuvintes;
@@ -166,6 +169,14 @@ public class EnviarUDP implements Runnable {
         } catch (IOException ioex) {
         }
         return sendBuf;
+    }
+
+    public ArrayList getPortas() {
+        return portas;
+    }
+
+    public ArrayList getEnderecos() {
+        return enderecos;
     }
 
 }
