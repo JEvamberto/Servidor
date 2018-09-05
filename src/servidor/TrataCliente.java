@@ -5,6 +5,7 @@
  */
 package servidor;
 
+import clientetcp.Finalizar;
 import clientetcp.Hello;
 import clientetcp.SetStation;
 import java.io.BufferedInputStream;
@@ -45,15 +46,17 @@ public class TrataCliente implements Runnable {
 
     Serializacao tr = new Serializacao();
 
-    short station;
-    File arquivo;
-    short udpPort;
-    EnviarUDP estacao[];
+    private short station;
+    private File arquivo;
+    private short udpPort;
+    private EnviarUDP estacao[];
+    private ArrayList listasClientes;
+    
 
-    public TrataCliente(Socket cliente, EnviarUDP[] estacao) {
+    public TrataCliente(Socket cliente, EnviarUDP[] estacao, ArrayList<Socket> clientes) {
 
         this.estacao = estacao;
-
+        this.listasClientes=clientes;
         this.cliente = cliente;
         Thread t = new Thread(this);
         this.welcome = new Welcome();
@@ -140,7 +143,28 @@ public class TrataCliente implements Runnable {
                     byte[] dadosSetStation = new byte[tamanho1];
 
                     recebeSetStation.read(dadosSetStation, 0, tamanho1);
-
+                    
+                    
+                    
+                    Object comandoFinal= tr.deserialize(dadosSetStation);
+                    
+                    if (comandoFinal instanceof Finalizar) {
+                        
+                        Finalizar fc=(Finalizar)comandoFinal;
+                        
+                        if (station >= 0 && station < estacao.length) {
+                            
+                            if (!sabe) {
+                                estacao[station].desconnect(udpPort, cliente.getInetAddress());
+                            }
+                            
+                            this.listasClientes.remove(cliente);
+                        }
+                        
+                        
+                    }else if(comandoFinal instanceof SetStation){
+                    
+                        
                     SetStation setStation = (SetStation) tr.deserialize(dadosSetStation);
 
                     if ((byte) setStation.getCommandType1() == 1) {
@@ -212,6 +236,12 @@ public class TrataCliente implements Runnable {
                         }
 
                     }
+                    
+                    
+                    
+                    }
+                    
+
 
                     saida = null;
 

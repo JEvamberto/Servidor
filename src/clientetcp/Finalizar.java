@@ -7,6 +7,7 @@ package clientetcp;
 
 import java.io.Serializable;
 
+
 /**
  *
  * @author jose
@@ -15,6 +16,11 @@ public class Finalizar implements Serializable {
     
     private short msgFinal=2;
     
+    
+    
+   
+    
+ 
     public short getMsgFinal(){
         return this.msgFinal;
     }

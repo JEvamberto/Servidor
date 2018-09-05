@@ -51,19 +51,20 @@ public class Snowcast_server {
         try {
             serverTCP = new ServerSocket(12333);
             ComandoQeP comando = new ComandoQeP(estacao,listaCliente);
-             ClienteDesconecta desconnect= new ClienteDesconecta (listaCliente,estacao);
+             
           while(true){     
             
             Socket cliente = serverTCP.accept();
             
             listaCliente.add(cliente);
             
-            new TrataCliente(cliente,estacao);
+            new TrataCliente(cliente,estacao,listaCliente);
           
           }
           
         } catch (IOException ex) {
-            
+            System.out.println("Mesmo ip do servidor já está em uso");
+            System.exit(0);
             Logger.getLogger(Snowcast_server.class.getName()).log(Level.SEVERE, null, ex);
         }
 
