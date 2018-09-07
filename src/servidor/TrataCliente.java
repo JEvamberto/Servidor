@@ -192,6 +192,8 @@ public class TrataCliente implements Runnable {
 
                         } else {
                             
+                            
+                            
                             saida = new DataOutputStream(cliente.getOutputStream());
                             InvalidCommand comandoInvalidd = new InvalidCommand();
                             String erro = "Erro: A estação " + station + " não existe";
@@ -201,6 +203,7 @@ public class TrataCliente implements Runnable {
                             saida.writeInt(dadosInvalidd.length);
                             saida.write(dadosInvalidd);
                             saida.flush();
+                           
 
                             saida = null;
 
