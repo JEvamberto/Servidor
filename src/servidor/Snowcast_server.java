@@ -5,12 +5,8 @@
  */
 package servidor;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -50,6 +46,8 @@ public class Snowcast_server {
 
         try {
             serverTCP = new ServerSocket(12333);
+            
+            System.out.println("Ip:"+serverTCP.getInetAddress());
             ComandoQeP comando = new ComandoQeP(estacao,listaCliente);
              
           while(true){     
@@ -71,6 +69,11 @@ public class Snowcast_server {
     }
 
     public static void main(String[] args) {
+        System.out.println("Olha o que foi passado por parâmetro:");
+        for (int i = 0; i <args.length; i++) {
+            System.out.println(args[i]);
+        }
+        
         servidor();
     }
 

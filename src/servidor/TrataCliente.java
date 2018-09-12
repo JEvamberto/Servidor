@@ -51,12 +51,11 @@ public class TrataCliente implements Runnable {
     private short udpPort;
     private EnviarUDP estacao[];
     private ArrayList listasClientes;
-    
 
     public TrataCliente(Socket cliente, EnviarUDP[] estacao, ArrayList<Socket> clientes) {
 
         this.estacao = estacao;
-        this.listasClientes=clientes;
+        this.listasClientes = clientes;
         this.cliente = cliente;
         Thread t = new Thread(this);
         this.welcome = new Welcome();
@@ -143,108 +142,103 @@ public class TrataCliente implements Runnable {
                     byte[] dadosSetStation = new byte[tamanho1];
 
                     recebeSetStation.read(dadosSetStation, 0, tamanho1);
-                    
-                    
-                    
-                    Object comandoFinal= tr.deserialize(dadosSetStation);
-                    
+
+                    Object comandoFinal = tr.deserialize(dadosSetStation);
+
                     if (comandoFinal instanceof Finalizar) {
-                        
-                        Finalizar fc=(Finalizar)comandoFinal;
-                        
+
+                        Finalizar fc = (Finalizar) comandoFinal;
+
                         if (station >= 0 && station < estacao.length) {
-                            
+
                             if (!sabe) {
                                 estacao[station].desconnect(udpPort, cliente.getInetAddress());
                             }
-                            
+
                             this.listasClientes.remove(cliente);
-                        }
-                        
-                        
-                    }else if(comandoFinal instanceof SetStation){
-                    
-                        
-                    SetStation setStation = (SetStation) tr.deserialize(dadosSetStation);
-
-                    if ((byte) setStation.getCommandType1() == 1) {
-                        //Lido com sucesso
-
-                        /*  2.Announce
-                    static byte replayType = 1;
-                    static byte songNameSize;
-                    static char songName[] = new char[songNameSize];
-                         */
-                        station = (short) setStation.getStationNumber();
-                        if (station >= 0 && station < estacao.length) {
-
-                            System.out.println("Estação escolhida: " + station);
-                            System.out.println("ENVIANDO ANNOUNCE");
-                            saida = new DataOutputStream(cliente.getOutputStream());
-
-                            announce.setSongName(arquivo[station].getName().toCharArray());
-
-                            byte[] dadosAnnounce = tr.serialize(announce);
-
-                            saida.writeInt(dadosAnnounce.length);
-                            saida.write(dadosAnnounce);
-                            saida.flush();
-
                         } else {
-                            
-                            
-                            
-                            saida = new DataOutputStream(cliente.getOutputStream());
-                            InvalidCommand comandoInvalidd = new InvalidCommand();
-                            String erro = "Erro: A estação " + station + " não existe";
-                            comandoInvalidd.setInvalidreplyString(erro.toCharArray());
-                            byte[] dadosInvalidd = tr.serialize(comandoInvalidd);
 
-                            saida.writeInt(dadosInvalidd.length);
-                            saida.write(dadosInvalidd);
-                            saida.flush();
-                           
-
-                            saida = null;
-
-                        }
-
-                        // saida.writeObject(arquivo[station].getName());
-                        if (sabe) {
-                            
-                            if (station>=0 && station<estacao.length) {
-                                
-                            estacao[station].connect(udpPort, this.cliente.getInetAddress());
-
-                            //enviar = new EnviarUDP(arquivo, udpPort, station);
-                            stationAnterior = station;
-                            sabe = false;
-                                
+                            if (!sabe) {
+                                estacao[stationAnterior].desconnect(udpPort, cliente.getInetAddress());
                             }
 
-                        } else {
-                            if (stationAnterior != station) {
+                            this.listasClientes.remove(cliente);
+
+                        }
+
+                    } else if (comandoFinal instanceof SetStation) {
+
+                        SetStation setStation = (SetStation) tr.deserialize(dadosSetStation);
+
+                        if ((byte) setStation.getCommandType1() == 1) {
+                          
+
+                      
+                            station = (short) setStation.getStationNumber();
+                            if (station >= 0 && station < estacao.length) {
+
+                                System.out.println("Estação escolhida: " + station);
+                                System.out.println("ENVIANDO ANNOUNCE");
+                                saida = new DataOutputStream(cliente.getOutputStream());
+
+                                announce.setSongName(arquivo[station].getName().toCharArray());
+
+                                byte[] dadosAnnounce = tr.serialize(announce);
+
+                                saida.writeInt(dadosAnnounce.length);
+                                saida.write(dadosAnnounce);
+                                saida.flush();
+
+                            } else {
+
+                                saida = new DataOutputStream(cliente.getOutputStream());
+                                InvalidCommand comandoInvalidd = new InvalidCommand();
+                                String erro = "Erro: A estação " + station + " não existe";
+                                comandoInvalidd.setInvalidreplyString(erro.toCharArray());
+                                byte[] dadosInvalidd = tr.serialize(comandoInvalidd);
+
+                                saida.writeInt(dadosInvalidd.length);
+                                saida.write(dadosInvalidd);
+                                saida.flush();
+
+                                saida = null;
+
+                            }
+
+                            // saida.writeObject(arquivo[station].getName());
+                            if (sabe) {
+
                                 if (station >= 0 && station < estacao.length) {
-                                    
-                                    estacao[stationAnterior].desconnect(udpPort, this.cliente.getInetAddress());
+
                                     estacao[station].connect(udpPort, this.cliente.getInetAddress());
+
+                                    //enviar = new EnviarUDP(arquivo, udpPort, station);
+                                    stationAnterior = station;
+                                    sabe = false;
+
                                 }
 
-                                //enviar.getT().interrupt();
-                                //enviar = null;
-                                //enviar = new EnviarUDP(arquivo, udpPort, station);
+                            } else {
+                                if (stationAnterior != station) {
+                                    if (station >= 0 && station < estacao.length) {
+
+                                        estacao[stationAnterior].desconnect(udpPort, this.cliente.getInetAddress());
+                                        estacao[station].connect(udpPort, this.cliente.getInetAddress());
+                                    }
+
+                                 
+                                }
+                                
+                                if (station >= 0 && station < estacao.length) {
+                                     stationAnterior = station;
+                                }
+                               
+
                             }
-                            stationAnterior = station;
 
                         }
 
                     }
-                    
-                    
-                    
-                    }
-                    
-
 
                     saida = null;
 

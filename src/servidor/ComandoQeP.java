@@ -56,7 +56,7 @@ public class ComandoQeP implements Runnable {
 
         for (int i = 0; i < this.estacao.length; i++) {
 
-            System.out.println("Estação: " + i + " Clientes: " + estacao[i].getQuantidadeDeOuvintes());
+            System.out.println("Estação " + i + ": Clientes: " + estacao[i].getQuantidadeDeOuvintes());
         }
     }
 

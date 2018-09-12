@@ -43,7 +43,7 @@ public class EnviarUDP implements Runnable {
         this.udpPort = udpPort;
         this.t = new Thread(this);
         t.start();
-        System.out.println("Eu foi criado" + station + " " + udpPort);
+       
     }
 
     public EnviarUDP(File[] arquivo, short udpPort, short station) {
@@ -52,7 +52,7 @@ public class EnviarUDP implements Runnable {
         this.udpPort = udpPort;
         this.t = new Thread(this);
         t.start();
-        System.out.println("Eu foi criado" + station + " " + udpPort);
+      
 
     }
 
