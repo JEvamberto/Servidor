@@ -5,7 +5,7 @@
  */
 package servidor;
 
-import java.io.BufferedInputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
+
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -88,14 +88,11 @@ public class EnviarUDP implements Runnable {
     public void run() {
         try {
 
-            InetAddress addr = InetAddress.getByName("192.168.0.255");
+            
 
             int pacoteTam = 50000;
             byte pacote[] = new byte[pacoteTam];
 
-            //   double numberPkg = Math.ceil((int) arquivo[station].length() / pacote);
-            //Enviar tamanho do arquivo
-            //Fim do tamanho do arquivo
             File file = this.ArquivoOficial;
             this.audio = EnviarUDP.getBytes(file);
 
@@ -111,7 +108,7 @@ public class EnviarUDP implements Runnable {
             while (true) {
 
                 for (int i = 0; i < audio.length; i++) {
-                    // System.out.println("SERÁ");
+                   
                     pacote[count] = audio[i];
                     if (count == pacote.length - 1) {
                         for (int j = 0; j < this.portas.size(); j++) {
@@ -125,7 +122,7 @@ public class EnviarUDP implements Runnable {
                     count++;
 
                 }
-                // System.out.println("oi");
+               
             }
 
             /*  for (double i = 0; i < numberPkg + 1; i++) {

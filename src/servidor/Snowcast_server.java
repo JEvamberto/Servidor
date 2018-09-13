@@ -20,46 +20,41 @@ import java.util.logging.Logger;
  */
 public class Snowcast_server {
 
-   
 //server
     static ServerSocket serverTCP;
     static DatagramSocket serverUDP;
     static ArrayList<Socket> listaCliente;
 
-    public static void servidor() {
-        
-        listaCliente= new ArrayList<>();
-        
-        
-        File file = new File("music");
+    public static void servidor(String porta, String DMusicas) {
+
+        listaCliente = new ArrayList<>();
+
+        File file = new File(DMusicas);
         File[] arquivo = file.listFiles();
-        
-        EnviarUDP estacao[]=new EnviarUDP[arquivo.length];
-        
+
+        EnviarUDP estacao[] = new EnviarUDP[arquivo.length];
+
         for (int i = 0; i < estacao.length; i++) {
-            
-            estacao[i]=new EnviarUDP(arquivo[i]);
+
+            estacao[i] = new EnviarUDP(arquivo[i]);
         }
-        
-       
-        
 
         try {
-            serverTCP = new ServerSocket(12333);
-            
-            System.out.println("Ip:"+serverTCP.getInetAddress());
-            ComandoQeP comando = new ComandoQeP(estacao,listaCliente);
-             
-          while(true){     
-            
-            Socket cliente = serverTCP.accept();
-            
-            listaCliente.add(cliente);
-            
-            new TrataCliente(cliente,estacao,listaCliente);
-          
-          }
-          
+            serverTCP = new ServerSocket(Integer.parseInt(porta));
+
+            System.out.println("Ip:" + serverTCP.getInetAddress());
+            ComandoQeP comando = new ComandoQeP(estacao, listaCliente);
+
+            while (true) {
+
+                Socket cliente = serverTCP.accept();
+
+                listaCliente.add(cliente);
+
+                new TrataCliente(cliente, estacao, listaCliente);
+
+            }
+
         } catch (IOException ex) {
             System.out.println("Mesmo ip do servidor já está em uso");
             System.exit(0);
@@ -70,11 +65,22 @@ public class Snowcast_server {
 
     public static void main(String[] args) {
         System.out.println("Olha o que foi passado por parâmetro:");
-        for (int i = 0; i <args.length; i++) {
-            System.out.println(args[i]);
+        String porta = null, musicas = null;
+
+        if (args.length == 0) {
+            System.out.println("Erro, por favor, Digite java Snowcast_server <porta> <diretorioDasMusicas>");
+            System.exit(0);
+        } else {
+
+            porta = args[0];
+            musicas = args[1];
+
+            System.out.println(porta);
+            System.out.println(musicas);
+
         }
-        
-        servidor();
+
+        servidor(porta,musicas);
     }
 
 }
