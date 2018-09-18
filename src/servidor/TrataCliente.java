@@ -8,16 +8,12 @@ package servidor;
 import clientetcp.Finalizar;
 import clientetcp.Hello;
 import clientetcp.SetStation;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-
-
 
 /**
  *
@@ -37,7 +33,6 @@ public class TrataCliente implements Runnable {
     Serializacao tr = new Serializacao();
 
     private short station;
-    private File arquivo;
     private short udpPort;
     private EnviarUDP estacao[];
     private ArrayList listasClientes;
@@ -70,8 +65,7 @@ public class TrataCliente implements Runnable {
 
         try {
             //hello
-            File file = new File("music");
-            File[] arquivo = file.listFiles();
+           
 
             welcome.setNumStations((short) estacao.length);
 
@@ -79,12 +73,12 @@ public class TrataCliente implements Runnable {
 
             int tamanho = receber.readInt();
             byte dados[] = new byte[tamanho];
-            System.out.println(dados.length);
+            
 
             receber.read(dados, 0, tamanho);
 
             /*   receber.read(dados, 0, dados.length);*/
-            Hello comandoHello = (Hello) TrataCliente.toObject(dados);
+            Hello comandoHello = (Hello) tr.deserialize(dados);
 
             if (comandoHello.getCommandType() == 0) {
                 udpPort = comandoHello.getUpdPort();
@@ -117,7 +111,7 @@ public class TrataCliente implements Runnable {
             }
 
             int stationAnterior = 0;
-            System.out.println("Porta UDP=" + udpPort);
+            //System.out.println("Porta UDP=" + udpPort);
             boolean sabe = true;
             EnviarUDP enviar = null;
             DataOutputStream saida;
@@ -161,9 +155,7 @@ public class TrataCliente implements Runnable {
                         SetStation setStation = (SetStation) tr.deserialize(dadosSetStation);
 
                         if ((byte) setStation.getCommandType1() == 1) {
-                          
 
-                      
                             station = (short) setStation.getStationNumber();
                             if (station >= 0 && station < estacao.length) {
 
@@ -171,7 +163,7 @@ public class TrataCliente implements Runnable {
                                 System.out.println("ENVIANDO ANNOUNCE");
                                 saida = new DataOutputStream(cliente.getOutputStream());
 
-                                announce.setSongName(arquivo[station].getName().toCharArray());
+                                announce.setSongName(estacao[station].getNameStation().toCharArray());
 
                                 byte[] dadosAnnounce = tr.serialize(announce);
 
@@ -216,13 +208,11 @@ public class TrataCliente implements Runnable {
                                         estacao[station].connect(udpPort, this.cliente.getInetAddress());
                                     }
 
-                                 
                                 }
-                                
+
                                 if (station >= 0 && station < estacao.length) {
-                                     stationAnterior = station;
+                                    stationAnterior = station;
                                 }
-                               
 
                             }
 
@@ -241,25 +231,6 @@ public class TrataCliente implements Runnable {
             // Logger.getLogger(TrataCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
-
-    public static Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
-        Object obj = null;
-        ByteArrayInputStream bis = null;
-        ObjectInputStream ois = null;
-        try {
-            bis = new ByteArrayInputStream(bytes);
-            ois = new ObjectInputStream(bis);
-            obj = ois.readObject();
-        } finally {
-            if (bis != null) {
-                bis.close();
-            }
-            if (ois != null) {
-                ois.close();
-            }
-        }
-        return obj;
     }
 
 }

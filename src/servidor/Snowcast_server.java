@@ -42,7 +42,7 @@ public class Snowcast_server {
         try {
             serverTCP = new ServerSocket(Integer.parseInt(porta));
 
-            System.out.println("Ip:" + serverTCP.getInetAddress());
+           
             ComandoQeP comando = new ComandoQeP(estacao, listaCliente);
 
             while (true) {
@@ -64,7 +64,7 @@ public class Snowcast_server {
     }
 
     public static void main(String[] args) {
-        System.out.println("Olha o que foi passado por parâmetro:");
+       
         String porta = null, musicas = null;
 
         if (args.length == 0) {
@@ -75,8 +75,6 @@ public class Snowcast_server {
             porta = args[0];
             musicas = args[1];
 
-            System.out.println(porta);
-            System.out.println(musicas);
 
         }
 

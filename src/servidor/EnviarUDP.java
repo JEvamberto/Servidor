@@ -46,15 +46,7 @@ public class EnviarUDP implements Runnable {
        
     }
 
-    public EnviarUDP(File[] arquivo, short udpPort, short station) {
-        this.station = station;
-        this.arquivo = arquivo;
-        this.udpPort = udpPort;
-        this.t = new Thread(this);
-        t.start();
-      
-
-    }
+   
 
     public Thread getT() {
         return t;
@@ -125,23 +117,12 @@ public class EnviarUDP implements Runnable {
                
             }
 
-            /*  for (double i = 0; i < numberPkg + 1; i++) {
-                    
-                    byte[] bufferPacote = new byte[pacote];
-                    buffStream.read(bufferPacote, 0, bufferPacote.length);
-                    System.out.println("Pacote:" + (i + 1));
-                    pkg = new DatagramPacket(bufferPacote, bufferPacote.length, addr, udpPort);
-                    enviar.send(pkg);
           
-              Thread.sleep(10);
-                }*/
         } catch (UnknownHostException ex) {
             Logger.getLogger(EnviarUDP.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SocketException ex) {
+        } catch (SocketException | InterruptedException ex) {
             Logger.getLogger(EnviarUDP.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(EnviarUDP.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
             Logger.getLogger(EnviarUDP.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -174,6 +155,13 @@ public class EnviarUDP implements Runnable {
 
     public ArrayList getEnderecos() {
         return enderecos;
+    }
+    public String getNameStation(){
+            
+        String name=this.ArquivoOficial.getName();
+        
+        return name;
+        
     }
 
 }
