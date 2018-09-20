@@ -67,8 +67,8 @@ public class Snowcast_server {
        
         String porta = null, musicas = null;
 
-        if (args.length == 0) {
-            System.out.println("Erro, por favor, Digite java Snowcast_server <porta> <diretorioDasMusicas>");
+        if (args.length == 0 || args.length >=3) {
+            System.out.println("Digite um parâmetro válido <porta> <diretorioDasMusicas>");
             System.exit(0);
         } else {
 
